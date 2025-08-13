@@ -10,6 +10,6 @@ body {
     width: 100%;
 }
 #status {
-    padding: 10px;
+    margin: 10px;
     font-size: 18px;
 }
