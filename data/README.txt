@@ -1,10 +1,14 @@
-Optional dataset folder
-=======================
+Dataset options
+==============
 
-Place a simplified global land polygons GeoJSON file here named:
+This build includes a tiny **sample** land dataset at `data/sample_land.geojson` (Sicily & Mallorca, very rough),
+so the **Compute 12 km zone** button works immediately if you pan to those regions.
 
-  ne_110m_land.geojson
+For production, replace it with a full land dataset at:
 
-Source suggestion (public domain): Natural Earth – theme "Land", scale 1:110m.
-The app will clip to the current map view and buffer by 12 km to display the
-coastal exclusion zone.
+  data/ne_110m_land.geojson
+
+(Example source: Natural Earth “Land” 1:110m, converted to GeoJSON.)
+
+The app will try to load `ne_110m_land.geojson` first; if it is missing, it falls back to `sample_land.geojson`.
+You can also use the **Load land GeoJSON…** button to pick a file at runtime without redeploying.

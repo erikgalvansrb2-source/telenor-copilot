@@ -19,6 +19,8 @@
       <button id="btnDrawCoast" class="btn">Draw coastline</button>
       <button id="btnClear" class="btn btn-secondary">Clear drawings</button>
       <button id="btnComputeView" class="btn btn-primary">Compute 12 km zone for current view</button>
+      <button id="btnLoadLand" class="btn">Load land GeoJSON…</button>
+      <input type="file" id="fileLand" accept=".json,.geojson,application/geo+json" style="display:none" />
       <label class="km-label">Threshold: <strong id="kmValue">12 km</strong></label>
     </div>
   </header>
@@ -38,7 +40,7 @@
         <p>
           The map can show a 12 km coastal exclusion zone either from a land dataset (optional
           <code>data/ne_110m_land.geojson</code>) or from a polyline you draw along the coastline.
-          Your position is checked against that zone to indicate if LTE activation is allowed.
+          If the land dataset is missing, use <em>Load land GeoJSON…</em> to provide your own file.
         </p>
       </details>
     </aside>
