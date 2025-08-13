@@ -3,88 +3,13 @@
 <head>
     <title>Telenor Maritime LTE Reception Tracker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        html, body { height: 100%; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        #map { height: 90%; width: 100%; }
-        #status { padding: 10px; text-align: center; font-size: 18px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="status">Loading location...</div>
+    <h1>Telenor Maritime LTE Reception Tracker</h1>
     <div id="map"></div>
-    <script>
-        let map, userMarker, coastMarker, lteCircle;
-
-        function haversineDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371000; // Earth radius in meters
-            const toRad = x => x * Math.PI / 180;
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        function initMap() {
-            map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 6,
-                center: { lat: 60.0, lng: 5.0 },
-            });
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    const coastLat = userLat - 0.1; // Simulated coast 10km south
-                    const coastLng = userLng;
-
-                    const userPos = { lat: userLat, lng: userLng };
-                    const coastPos = { lat: coastLat, lng: coastLng };
-
-                    const centerLat = (userLat + coastLat) / 2;
-                    const centerLng = (userLng + coastLng) / 2;
-                    map.setCenter({ lat: centerLat, lng: centerLng });
-
-                    userMarker = new google.maps.Marker({
-                        position: userPos,
-                        map: map,
-                        title: "Your Location",
-                        icon: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
-                    });
-
-                    coastMarker = new google.maps.Marker({
-                        position: coastPos,
-                        map: map,
-                        title: "Simulated Coast",
-                        icon: "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-                    });
-
-                    lteCircle = new google.maps.Circle({
-                        strokeColor: "#0000FF",
-                        strokeOpacity: 0.8,
-                        strokeWeight: 2,
-                        fillColor: "#0000FF",
-                        fillOpacity: 0.2,
-                        map: map,
-                        center: coastPos,
-                        radius: 12000
-                    });
-
-                    const distance = haversineDistance(userLat, userLng, coastLat, coastLng);
-                    const statusText = distance >= 12000
-                        ? `✅ You are inside the LTE reception zone (Distance: ${Math.round(distance)} meters)`
-                        : `❌ You are outside the LTE reception zone (Distance: ${Math.round(distance)} meters)`;
-                    document.getElementById("status").innerText = statusText;
-                }, () => {
-                    document.getElementById("status").innerText = "Geolocation failed.";
-                });
-            } else {
-                document.getElementById("status").innerText = "Geolocation not supported.";
-            }
-        }
-    </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVCP7JXnHdf3LUt-WE9uMVpzRuW6dlUYo&callback=initMap&libraries=geometry"></script>
+    <div id="status">Locating...</div>
+    <script src="script.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCVCP7JXnHdf3LUt-WE9uMVpzRuW6dlUYo&metry
 </body>
 </html>
