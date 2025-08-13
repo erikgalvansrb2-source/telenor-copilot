@@ -5,26 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Telenor Maritime – LTE 12 km Compliance Map</title>
   <link rel="stylesheet" href="styles.css" />
-  <!-- Turf.js for geospatial buffering, clipping & distance calculations -->
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
 </head>
 <body>
   <header class="app-header">
     <div class="brand">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Telenor_2013_logo.svg" alt="" class="brand-logo" />
+      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Telenor_2013_logo.svg" class="brand-logo" alt="" />
       <span class="brand-title">Maritime LTE – 12 km Compliance Map</span>
     </div>
     <div class="controls">
       <button id="btnUseLocation" class="btn">Use my location</button>
       <button id="btnDrawCoast" class="btn">Draw coastline</button>
-      <button id="btnClear" class="btn btn-secondary">Clear drawings</button>
+      <button id="btnClear" class="btn btn-secondary">Clear</button>
       <button id="btnComputeView" class="btn btn-primary">Compute 12 km zone for current view</button>
       <button id="btnLoadLand" class="btn">Load land GeoJSON…</button>
       <input type="file" id="fileLand" accept=".json,.geojson,application/geo+json" style="display:none" />
       <label class="km-label">Threshold: <strong id="kmValue">12 km</strong></label>
     </div>
   </header>
-
   <main>
     <div id="map"></div>
     <aside class="panel">
@@ -35,31 +33,9 @@
         <li><span>Margin vs 12 km:</span> <strong id="margin">–</strong></li>
         <li><span>Position accuracy:</span> <strong id="accuracy">–</strong></li>
       </ul>
-      <details>
-        <summary>How it works</summary>
-        <p>
-          The map can show a 12 km coastal exclusion zone either from a land dataset (preferably
-          <code>data/ne_110m_land.geojson</code>) or from a polyline you draw along the coastline.
-          If the land dataset is missing locally, the app will try a public CDN copy of Natural Earth 110m land.
-        </p>
-      </details>
     </aside>
   </main>
-
-  <footer class="app-footer">
-    <small>For planning/visualization only. Geospatial buffers and datasets may be approximate.</small>
-  </footer>
-
-  <script>
-    // Register service worker for offline caching (dataset + JS/CSS)
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(()=>{});
-      });
-    }
-  </script>
-
-  <!-- We load Google Maps dynamically after reading your API key from "api-key 1.txt" -->
+  <footer class="app-footer"><small>For planning/visualization only.</small></footer>
   <script src="app.js"></script>
 </body>
 </html>
