@@ -1,14 +1,16 @@
-
 function initMap() {
+    console.log("Initializing map...");
+
     if (!navigator.geolocation) {
+        console.error("Geolocation not supported.");
         document.getElementById("status").textContent = "Geolocation is not supported by your browser.";
         return;
     }
 
     navigator.geolocation.getCurrentPosition(function(position) {
-        const userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        console.log("User location obtained:", position.coords);
 
-        // Simulated coast location 12 km inland (south)
+        const userLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         const coastLatLng = google.maps.geometry.spherical.computeOffset(userLatLng, 12000, 180);
 
         const mapBounds = new google.maps.LatLngBounds();
@@ -21,7 +23,6 @@ function initMap() {
         });
         map.fitBounds(mapBounds);
 
-        // Add user marker
         new google.maps.Marker({
             position: userLatLng,
             map: map,
@@ -29,7 +30,6 @@ function initMap() {
             icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
         });
 
-        // Add coast marker
         new google.maps.Marker({
             position: coastLatLng,
             map: map,
@@ -37,7 +37,6 @@ function initMap() {
             icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
         });
 
-        // Draw LTE zone circle
         const lteCircle = new google.maps.Circle({
             strokeColor: "#0000FF",
             strokeOpacity: 0.8,
@@ -49,13 +48,28 @@ function initMap() {
             radius: 12000
         });
 
-        // Calculate distance and update status
         const distance = google.maps.geometry.spherical.computeDistanceBetween(userLatLng, coastLatLng);
+        console.log("Distance to coast:", distance);
+
         const statusText = distance >= 12000
             ? `✅ You are inside the LTE reception zone (Distance: ${Math.round(distance)} meters)`
             : `❌ You are outside the LTE reception zone (Distance: ${Math.round(distance)} meters)`;
         document.getElementById("status").textContent = statusText;
-    }, function() {
+
+        fetch("http://maritime-lte.telenor.com/api/v1/reception")
+            .then(response => {
+                console.log("API response status:", response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log("API response data:", data);
+            })
+            .catch(error => {
+                console.error("API call failed:", error);
+            });
+
+    }, function(error) {
+        console.error("Geolocation error:", error.message);
         document.getElementById("status").textContent = "Unable to retrieve your location.";
     });
 }
