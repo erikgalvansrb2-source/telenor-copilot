@@ -1,4 +1,4 @@
-function initMap() {
+window.initMap = function() {
     console.log("Initializing map...");
 
     if (!navigator.geolocation) {
@@ -55,21 +55,8 @@ function initMap() {
             ? `✅ You are inside the LTE reception zone (Distance: ${Math.round(distance)} meters)`
             : `❌ You are outside the LTE reception zone (Distance: ${Math.round(distance)} meters)`;
         document.getElementById("status").textContent = statusText;
-
-        fetch("http://maritime-lte.telenor.com/api/v1/reception")
-            .then(response => {
-                console.log("API response status:", response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log("API response data:", data);
-            })
-            .catch(error => {
-                console.error("API call failed:", error);
-            });
-
     }, function(error) {
         console.error("Geolocation error:", error.message);
         document.getElementById("status").textContent = "Unable to retrieve your location.";
     });
-}
+};
