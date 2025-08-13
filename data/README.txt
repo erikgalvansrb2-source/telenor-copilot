@@ -1,14 +1,11 @@
-Dataset options
-==============
+Natural Earth dataset (110m) integration
+=======================================
 
-This build includes a tiny **sample** land dataset at `data/sample_land.geojson` (Sicily & Mallorca, very rough),
-so the **Compute 12 km zone** button works immediately if you pan to those regions.
+This build will look for a local file at `data/ne_110m_land.geojson` first.
+If it's missing, it falls back to the public CDN copy hosted by geojson.xyz (CloudFront):
+  https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_land.geojson
 
-For production, replace it with a full land dataset at:
+You can also load a custom GeoJSON at runtime via the **Load land GeoJSON…** button.
 
-  data/ne_110m_land.geojson
-
-(Example source: Natural Earth “Land” 1:110m, converted to GeoJSON.)
-
-The app will try to load `ne_110m_land.geojson` first; if it is missing, it falls back to `sample_land.geojson`.
-You can also use the **Load land GeoJSON…** button to pick a file at runtime without redeploying.
+For production and offline use, place the file in `data/ne_110m_land.geojson`.
+(Recommended source: Natural Earth 110m Land. See https://www.naturalearthdata.com/downloads/110m-physical-vectors/)

@@ -38,9 +38,9 @@
       <details>
         <summary>How it works</summary>
         <p>
-          The map can show a 12 km coastal exclusion zone either from a land dataset (optional
+          The map can show a 12 km coastal exclusion zone either from a land dataset (preferably
           <code>data/ne_110m_land.geojson</code>) or from a polyline you draw along the coastline.
-          If the land dataset is missing, use <em>Load land GeoJSON…</em> to provide your own file.
+          If the land dataset is missing locally, the app will try a public CDN copy of Natural Earth 110m land.
         </p>
       </details>
     </aside>
@@ -49,6 +49,15 @@
   <footer class="app-footer">
     <small>For planning/visualization only. Geospatial buffers and datasets may be approximate.</small>
   </footer>
+
+  <script>
+    // Register service worker for offline caching (dataset + JS/CSS)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(()=>{});
+      });
+    }
+  </script>
 
   <!-- We load Google Maps dynamically after reading your API key from "api-key 1.txt" -->
   <script src="app.js"></script>

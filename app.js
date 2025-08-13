@@ -1,4 +1,4 @@
-/* Telenor Maritime – LTE 12 km compliance map (improved dataset handling) */
+/* Telenor Maritime – LTE 12 km compliance map (Natural Earth 110m fallback + SW cache) */
 (() => {
   const LTE_MIN_DISTANCE_KM = 12;
 
@@ -26,9 +26,13 @@
   }
   const BASE = getBasePath();
 
-  // Candidate URLs in priority order
+  // Public CDN copy of Natural Earth 110m land (GeoJSON via geojson.xyz CDN)
+  const NE110M_CDN = 'https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_110m_land.geojson';
+
+  // Candidate URLs in priority order (local first, then CDN, then tiny sample)
   const LAND_URLS = [
     BASE + 'data/ne_110m_land.geojson',
+    NE110M_CDN,
     BASE + 'data/sample_land.geojson'
   ];
 
@@ -44,7 +48,6 @@
 
   function loadGoogleMaps(key) {
     const s = document.createElement('script');
-    // Load drawing + geometry libraries
     s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&libraries=geometry,drawing&callback=initMap`;
     s.async = true;
     s.defer = true;
@@ -89,7 +92,6 @@
       drawnCoastlines.push(poly);
       updateZoneFromDrawnCoastlines();
       poly.addListener('rightclick', () => {
-        // remove individual polyline on right-click
         poly.setMap(null);
         drawnCoastlines = drawnCoastlines.filter(p => p !== poly);
         updateZoneFromDrawnCoastlines();
@@ -122,7 +124,6 @@
       }
     });
 
-    // Try to get location immediately
     useMyLocation();
   };
 
@@ -188,7 +189,6 @@
   function onPosErr(err) {
     console.warn('Geolocation error', err);
     $status().textContent = 'Location permission denied or unavailable. You can still pan/zoom the map and draw coastline.';
-    // Keep a sensible default center if no geolocation
     if (map && map.getZoom() < 3) {
       map.setCenter({ lat: 20, lng: 0 });
       map.setZoom(2);
@@ -197,7 +197,6 @@
 
   // --- Zone computation options ---
 
-  // A) From a user‑drawn coastline polyline (simple & local)
   function updateZoneFromDrawnCoastlines() {
     exclusionDataLayer.forEach(f => exclusionDataLayer.remove(f));
     exclusionGeoJSON = null;
@@ -207,7 +206,6 @@
       return;
     }
 
-    // Convert polylines to a single LineString/MultiLineString in GeoJSON
     const lines = drawnCoastlines.map(poly => {
       const path = poly.getPath().getArray().map(ll => [ll.lng(), ll.lat()]);
       return turf.lineString(path);
@@ -215,7 +213,6 @@
     const ml = turf.featureCollection(lines);
     const merged = lines.length === 1 ? lines[0] : turf.combine(ml).features[0];
 
-    // Buffer outward by 12 km to create the coastal exclusion zone
     const buffer = turf.buffer(merged, LTE_MIN_DISTANCE_KM, { units: 'kilometers' });
 
     exclusionGeoJSON = buffer;
@@ -223,13 +220,11 @@
     evaluateCompliance();
   }
 
-  // B) From global/region land polygons (file or bundled sample) clipped to current view
   async function computeZoneForCurrentView() {
     try {
       exclusionDataLayer.forEach(f => exclusionDataLayer.remove(f));
       exclusionGeoJSON = null;
 
-      // Ensure landDataset is loaded
       if (!landDataset) {
         landDataset = await tryLoadLandDataset();
       }
@@ -238,12 +233,10 @@
         return;
       }
 
-      // Clip to current map bounds for performance
       const b = map.getBounds();
       const sw = b.getSouthWest(), ne = b.getNorthEast();
       const bbox = [sw.lng(), sw.lat(), ne.lng(), ne.lat()];
 
-      // If bbox crosses antimeridian, split into two bboxes
       let clipped;
       if (bbox[0] > bbox[2]) {
         const left = [bbox[0], bbox[1], 180, bbox[3]];
@@ -255,7 +248,6 @@
         clipped = turf.bboxClip(landDataset, bbox);
       }
 
-      // Buffer by 12 km
       const buffer = turf.buffer(clipped, LTE_MIN_DISTANCE_KM, { units: 'kilometers' });
 
       exclusionGeoJSON = buffer;
@@ -271,7 +263,7 @@
   async function tryLoadLandDataset() {
     for (const url of LAND_URLS) {
       try {
-        const r = await fetch(url, { cache: 'reload' });
+        const r = await fetch(url, { cache: 'force-cache' });
         if (!r.ok) continue;
         const json = await r.json();
         if (json && json.type) {
@@ -283,14 +275,11 @@
     return null;
   }
 
-  // --- Helpers ---
   function addGeoJSONToDataLayer(dataLayer, geojson) {
-    // Remove old features
     dataLayer.forEach(f => dataLayer.remove(f));
     dataLayer.addGeoJson(geojson);
   }
 
-  // Evaluate if the user is inside or outside the exclusion zone, and compute distances/margins
   function evaluateCompliance() {
     let user = userMarker ? userMarker.getPosition() : null;
     if (!user) return;
@@ -298,12 +287,9 @@
     let distToCoastKm = null;
     let allowed = null;
 
-    // Prefer exclusionGeoJSON (buffer from land or drawn line)
     if (exclusionGeoJSON) {
       const pt = turf.point([user.lng(), user.lat()]);
       const isInside = turf.booleanPointInPolygon(pt, exclusionGeoJSON);
-
-      // Distance to the exclusion boundary (which is 12 km from coast):
       const boundary = turf.polygonToLine(exclusionGeoJSON);
       const nearest = turf.nearestPointOnLine(boundary, pt, { units: 'kilometers' });
       const distToBoundaryKm = nearest.properties.dist;
@@ -321,7 +307,6 @@
       return;
     }
 
-    // If we have no exclusionGeoJSON but do have drawn polylines,
     if (drawnCoastlines.length) {
       const lines = drawnCoastlines.map(poly => {
         const path = poly.getPath().getArray().map(ll => [ll.lng(), ll.lat()]);
@@ -339,7 +324,6 @@
       return;
     }
 
-    // No coastline info yet
     $status().textContent = 'No coastal data yet: click “Draw coastline”, “Compute 12 km zone”, or “Load land GeoJSON…”.';
     $shoreDist().textContent = '–';
     $margin().textContent = '–';
@@ -362,14 +346,10 @@
   }
 
   function clearAll() {
-    // Clear drawn polylines
     drawnCoastlines.forEach(p => p.setMap(null));
     drawnCoastlines = [];
-
-    // Clear exclusion polygons
     exclusionDataLayer.forEach(f => exclusionDataLayer.remove(f));
     exclusionGeoJSON = null;
-
     evaluateCompliance();
   }
 })();

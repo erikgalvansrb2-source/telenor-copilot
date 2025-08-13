@@ -98,6 +98,5 @@ main {
   color: var(--muted);
 }
 
-/* Badge styles for status text */
 .status-ok { color: var(--ok); }
 .status-bad { color: var(--danger); }
