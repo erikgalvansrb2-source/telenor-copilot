@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Telenor Maritime – LTE 12 km Compliance Map</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='14'%3E%F0%9F%8C%90%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Inline bootstrap loader for Maps JS API (v=weekly) -->
+  <link rel="stylesheet" href="styles.css?v=20250813" />
   <script>
     (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;
     b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,
@@ -14,17 +13,17 @@
     e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);
     e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;
     d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";
-    m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-      key: "YOUR_GOOGLE_MAPS_API_KEY",
-      v: "weekly"
-    });
+    m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({ key: "YOUR_GOOGLE_MAPS_API_KEY", v: "weekly" });
   </script>
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app-v2.js?v=20250813"></script>
 </head>
 <body>
   <header class="app-header">
     <div class="brand">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Telenor_2013_logo.svg" class="brand-logo" alt="" />
+      <svg class="brand-logo" width="22" height="22" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="32" cy="32" r="30" fill="#1f57d1"/>
+        <path d="M19 24c9-8 18 0 18 0m-18 16c9 8 18 0 18 0" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </svg>
       <span class="brand-title">Maritime LTE – 12 km Compliance Map</span>
     </div>
     <div class="controls">

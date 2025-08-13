@@ -1,7 +1,7 @@
 :root{--bg:#0b1b2b;--panel-bg:#101926;--text:#e8f1ff;--muted:#93a4bd;--btn:#20324a;--btn-hover:#2a4060;--border:#22344b;--danger:#ff5c7a;--ok:#39d98a}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial}
 .app-header{display:flex;justify-content:space-between;align-items:center;background:#0d2137;border-bottom:1px solid var(--border);padding:8px 12px;gap:12px}
-.brand{display:flex;align-items:center;gap:10px}.brand-logo{height:22px;opacity:.9}.brand-title{font-weight:600}
+.brand{display:flex;align-items:center;gap:10px}.brand-logo{display:block}.brand-title{font-weight:600}
 .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .btn{border:1px solid var(--border);background:var(--btn);color:var(--text);padding:8px 12px;border-radius:8px;cursor:pointer}.btn:hover{background:var(--btn-hover)}
 .btn-primary{background:linear-gradient(180deg,#2a6fff,#1f57d1);border-color:#2a6fff}.btn-secondary{background:#26374e}
